@@ -1,0 +1,30 @@
+<%- include('../../partials/head.ejs') -%>
+<div class="container">
+  <table class="table table-striped">
+    <thead class="thead-dark">
+      <th scope="col">Nome</th>
+      <th scope="col">Especialidade</th>
+      <th scope="col">Registro</th>
+      <th scope="col">Ação</th>
+    </thead>
+    <tbody>
+      <% data.forEach(function(details) { %>
+      <tr>
+        <td scope="col"><%= details.nome %></td>
+        <td scope="col"><%= details.especialidade %></td>
+        <td scope="col"><%= details.registro %></td>
+        <td scope="col">
+          <a class="btn btn-primary" href="/medicos-editar/<%= details._id %>"
+            >editar</a
+          >
+          <a class="btn btn-danger" href="/medicos-deletar/<%= details._id%>"
+            >excluir</a
+          >
+        </td>
+      </tr>
+      <%})%>
+    </tbody>
+  </table>
+  <a class="btn btn-dark" href="/medicos-cadastrar">Cadastrar</a>
+</div>
+<%- include('../../partials/footer.ejs') -%>
