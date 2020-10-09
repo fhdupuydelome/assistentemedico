@@ -233,16 +233,90 @@ app.route('/medicamentos/:id')
     })
 })
 
-app.route('/delete/:id')
-.get((req, res) => {
-  var id = req.params.id
 
-  db.collection('medicamento').deleteOne({_id: ObjectId(id)},
-  (err, result) => {
-      if (err) return console.log(err)
-      console.log('Valor removido com Sucesso!')
-      res.redirect('/show')
-    })
-})
 
 //fim da rota pacientes
+
+// rota de medicamentos
+////////////////////////// CARREGAR PAG DE INSERIR DADOS /////////////////////////
+app.get('/medicamentos', function(req, res){
+  res.render('pages/medicamentos/index.ejs');
+})
+
+//////////////////////////////////    RENDERIZAR DADOS         ////////////////////////////////////////////////////////////
+app.get('/listarmedicamentos', (req, res) => {
+db.collection('medicamento').find().toArray((err, results) => { 
+    if (err) return console.log(err)
+    console.log(results)
+    res.render('pages/medicamentos/visualizar.ejs', {medicamento: results })
+
+})
+})
+
+
+app.post('/salvarmedicamentos', (req, res)=>{
+  //criar a coleção medicamento, que irá armazenar nossos dados
+  db.collection('medicamento').save(req.body, (err, result) => {
+      if (err) return console.log(err)
+   
+      console.log('Salvo no Banco de Dados')
+      res.redirect('/listarmedicamentos')
+    })
+});
+/////////////////////////////////////////////////   EDITAR  ///////////////////////////////////////////////////////////////////
+
+app.route('/editmedico/:id')
+
+.get((req, res) => {
+var id = req.params.id
+  db.collection('medicamento').find(ObjectId(id)).toArray((err, result) => {
+      if (err) return res.send(err)
+      res.render('pages/medicamentos/editar.ejs', { medicamento: result })
+  })
+})
+
+.post((req, res) => {
+var id = req.params.id
+var name = req.body.name
+var horas = req.body.horas
+var substancia = req.body.substancia
+var dosagem = req.body.dosagem
+var marca = req.body.marca
+var lab = req.body.lab
+var tomar = req.body.tomar
+var teste = req.body.teste
+
+db.collection('medicamento').updateOne({_id: ObjectId(id)}, {
+    $set: {
+      name:name,
+      horas: horas,
+      substancia:substancia,
+      dosagem: dosagem,
+      marca:marca,
+      lab: lab,
+      tomar:tomar,
+      teste: teste
+    }
+  }, (err, result) => {
+    if (err) return res.send(err)
+    
+    console.log('Banco Atualizado com Sucesso!')
+    res.redirect('/listarmedicamentos')
+    
+  })
+})
+
+
+///////////////////////// DELETAR ///////////////
+app.route('/delete/:id')
+.get((req, res) => {
+var id = req.params.id
+
+db.collection('medicamento').deleteOne({_id: ObjectId(id)},
+(err, result) => {
+    if (err) return console.log(err)
+    console.log('Valor removido com Sucesso!')
+    res.redirect('/listarmedicamentos')
+  })
+})
+//fim da rota de medicamentos
